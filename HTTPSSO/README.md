@@ -2,12 +2,12 @@
 Progress Application Server for OpenEdge provides various options for users to authenticate their Applications with enterprise servers. In this example, we are going to cover HTTP SSO functionality. The ABLApp Name is "SSOApp" and it is going to be consisting of 3 WebApps. In this example, we are going to build SSOApp and also compile the ABL code with the available version of OpenEdge.
 
 # Build the OEAR
-1. Open proenv command, navigate to ABLAppExample folder and then type proant command
+1. Open proenv command, navigate to HTTPSSO folder and then type proant command
 ```sh
-   cd ABLAppExample
+   cd HTTPSSO
    proant
 ```
-2. The OEAR artefact will be generated in ABLAppExample/build/oear folder.
+2. The OEAR artefact will be generated in HTTPSSO/build/oear folder.
 
 # Import the OEAR
 
@@ -30,7 +30,7 @@ The OEAR for the SSO App has three webapps </br>
 
 ```sh
    cd oepas/bin
-   ./tcman.sh import $HOME/ABLAppExample/build/oear/SSOApp-1.0.0-ALPHA.oear
+   ./tcman.sh import $HOME/HTTPSSO/build/oear/SSOApp-1.0.0-ALPHA.oear
 ```
 
 SSOApp should be imported successfully. In addition to deploying the webapps for the SSOApp, it will also compile the ABL Code and create the database used for this ABL Application.
