@@ -1,0 +1,30 @@
+{
+  "services": {
+    "Payments": {
+      "version": "1.0.0",
+      "operations": {
+        "/userInfo": {
+          "GET": {
+            "contentType": "application/json",
+            "accept": "application/json",
+            "entity": {
+              "name": "Payments",
+              "function": "userInfo",
+              "arg": [
+                 {
+                  "ablName": "",
+                  "ioMode": "RETURN",
+                  "ablType": "CLASS Progress.Json.ObjectModel.JsonObject",
+                  "msgElem": {
+                    "type": "field",
+                    "name": "CPInfo"
+                  }
+                }
+               ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

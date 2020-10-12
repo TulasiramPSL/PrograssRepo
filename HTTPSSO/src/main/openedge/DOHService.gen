@@ -1,0 +1,233 @@
+{"services": {"DOHService": {
+    "version": "1.0.0",
+    "operations": {
+        "\/": {"GET": {
+            "contentType": "application\/json",
+            "statusCode": 200,
+            "file": "$CATALINA_BASE\/webapps\/$oepas-webapp\/static\/DOHService.json"
+        }},
+        "\/SportsCE": {
+            "PUT": {
+                "contentType": "application\/json",
+                "options": {"writeBI": true},
+                "entity": {
+                    "name": "SportsCE",
+					"function": "UpdateSportsCE",
+                    "arg": [{
+                        "ablName": "dsEmployee",
+                         "ablType": "DATASET",
+                        "ioMode": "INPUT-OUTPUT",
+                        "msgElem": {
+                            "type": "BODY",
+                            "name": null
+                        }
+                    }]
+                }
+            },
+            "DELETE": {
+                "contentType": "application\/json",
+                "options": {"writeBI": true},
+                "entity": {
+                    "name": "SportsCE",
+                    "function": "DeleteSportsCE",
+                    "arg": [{
+                        "ablName": "dsEmployee",
+                        "ablType": "DATASET",
+                        "ioMode": "INPUT-OUTPUT",
+                        "msgElem": {
+                            "type": "BODY",
+                            "name": null
+                        }
+                    }]
+                }
+            },
+            "GET": {
+                "contentType": "application\/json",
+                "options": {"writeBI": true},
+                "entity": {
+                    "name": "SportsCE",
+                    "function": "ReadSportsCE",
+                    "arg": [
+                        {
+                            "ablName": "filter",
+                            "ablType": "CHARACTER",
+                            "ioMode": "INPUT",
+                            "msgElem": {
+                                "type": "QUERY",
+                                "name": "filter"
+                            }
+                        },
+                        {
+                            "ablName": "dsEmployee",
+                            "ablType": "DATASET",
+                            "ioMode": "OUTPUT",
+                            "msgElem": {
+                                "type": "BODY",
+                                "name": null
+                            }
+                        }
+
+					]
+
+                }
+            },
+            "POST": {
+                "contentType": "application\/json",
+                "options": {"writeBI": true},
+                "entity": {
+                    "name": "SportsCE",
+                    "function": "CreateSportsCE",
+                    "arg": [{
+                        "ablName": "dsEmployee",
+                        "ablType": "DATASET",
+                        "ioMode": "INPUT-OUTPUT",
+                        "msgElem": {
+                            "type": "BODY",
+                            "name": null
+                        }
+                    }]
+                }
+            }
+        },
+        "\/SportsCE\/InvokeBE": {"PUT": {
+            "contentType": "application\/json",
+            "options": {
+                "writeBI": false,
+                "requestEnvelope": true,
+                "responseEnvelope": true
+            },
+            "entity": {
+                "name": "SportsCE",
+                "function": "InvokeBE",
+                "arg": []
+            }
+        }},
+        "\/SportsCE\/SubmitSportsCE": {"PUT": {
+            "contentType": "application\/json",
+            "options": {"writeBI": true},
+            "entity": {
+                "name": "SportsCE",
+                "function": "SubmitSportsCE",
+                "arg": [{
+                    "ablName": "dsEmployee",
+                    "ablType": "DATASET",
+                    "ioMode": "INPUT-OUTPUT",
+                    "msgElem": {
+                        "type": "BODY",
+                        "name": null
+                    }
+                }]
+            }
+        }}
+    },
+    "schemas": {"dsEmployee": {"ttEmployee": {
+        "trackChanges": true,
+        "indexes": {
+ "DeptCode": {
+                "primary": false,
+                "unique": false,
+                "word": false,
+                "fields": ["DeptCode"]
+            },
+            "EmpNo": {
+                "primary": true,
+                "unique": true,
+                "word": false,
+                "fields": ["EmpNum"]
+            },
+            "Name": {
+                "primary": false,
+                "unique": true,
+                "word": false,
+                "fields": [
+                    "LastName",
+                    "FirstName"
+                ]
+            }
+        },
+        "fields": [
+            {
+                "name": "EmpNum",
+                "ablType": "INTEGER",
+                "extent": null
+            },
+            {
+                "name": "LastName",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "FirstName",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "Address",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "Address2",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "City",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            
+			
+			{
+                "name": "State",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "PostalCode",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "HomePhone",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "WorkPhone",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "DeptCode",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "Position",
+                "ablType": "CHARACTER",
+                "extent": null
+            },
+            {
+                "name": "Birthdate",
+                "ablType": "DATE",
+                "extent": null
+            },
+            {
+                "name": "StartDate",
+                "ablType": "DATE",
+                "extent": null
+            },
+            {
+                "name": "VacationDaysLeft",
+                "ablType": "INTEGER",
+                "extent": null
+            },
+            {
+                "name": "SickDaysLeft",
+                "ablType": "INTEGER",
+                "extent": null
+            }
+        ]
+    }}}
+}}}

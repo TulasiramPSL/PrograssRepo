@@ -1,0 +1,118 @@
+<project name="OpenEdge Application Archive (OEAR) Example" default="build" basedir=".">
+
+    <description>
+    Generates an OpenEdge Archive file that can be deployed to a PASOE Server
+    </description>
+
+    <!-- Set environment variables required for the ANT script -->  
+    <property environment="env" />
+    <fail unless="env.DLC" message="You should install OpenEdge to run this script"/>
+    <property name="openedge" value="src/main/openedge" />
+    <property name="bin" value="src/main/bin" />
+    <property name="tlr" value="src/main/tlr" />
+    <property name="conf" value="src/main/conf" />
+    <property name="rcode" value="build/rcode" />
+    <property name="instance" value="src/main/instance" />
+    <property name="dbdir" value="build/db" />
+    <property name="webapps" value="build/webapps" />
+    <property name="theAppName" value="SSOApp" />
+    <property name="theAppVersion" value="1.0.0" />
+    <property name="classifier" value="ALPHA" />
+
+    <!-- Get the oeant version -->
+    <first id="oe_version">
+    <fileset dir="${env.DLC}/java/oe" includes="**/oeant-*.jar" />
+    </first>
+    <property name="oeversion" value="${toString:oe_version}" />
+    
+
+    <!-- Load PCT tasks from DLC/pct -->
+    <taskdef resource="PCT.properties" classpath="${env.DLC}/pct/PCT.jar" loaderRef="pct" />
+    <typedef resource="types.properties" classpath="${env.DLC}/pct/PCT.jar" loaderRef="pct" />
+    <record name="build.log" loglevel="verbose" append="false"/>
+
+    <target name="build" depends="clean,packageApp">
+    </target>
+
+    <target name="clean" >
+        <delete quiet="true" >
+	        <fileset dir="build" />
+	    </delete>
+    </target>
+
+    <target name="packageApp" depends="compile, buildwebapps">
+        <taskdef name="ABLApp" classname="com.progress.oeant.ABLApp" classpath="${oeversion}"/>
+
+
+        <ABLApp description="Sample creation of an ABLApp"
+            appName="${theAppName}"
+            archiveBaseName="${theAppName}"
+            archiveVersion="${theAppVersion}"
+            archiveClassifier="ALPHA"
+            basedir="src/main/SSOApp"
+            destdir="build/oear">
+
+            <bin dir="${bin}" /> 
+            <tlr dir="${tlr}" />
+            <conf dir="${conf}" />
+            <openedge dir="${rcode}" includes="**/*.r,*.gen,*.map" />
+            <webapps dir="${webapps}" />
+            <instance dir="${instance}" /> 
+
+        </ABLApp>
+
+    </target>
+
+    <target name="compile" depends="createdb">
+
+        <PCTCompile destDir="${rcode}" dlcHome="${env.DLC}" relativePaths="false">
+            <fileset dir="${openedge}" includes="**/*.p,**/*.cls" />
+            <DBConnection dbName="sports2000" dbDir="${dbdir}" readOnly="true" />
+            <propath>
+                <pathelement path="${openedge}"/>
+            </propath>
+        </PCTCompile>
+
+        <copy todir="${rcode}">
+            <fileset dir="${openedge}">
+                <include name="**/*.gen"/>
+                <include name="**/*.map"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="createdb">
+	    <echo>creating database copy of sports2000</echo>
+	 
+	    <mkdir dir="${dbdir}"/>
+	    <sports2000 dbName="sports2000" destDir="${dbdir}" dlcHome="${env.DLC}" />
+	
+	    <PCTLoadData dlcHome="${env.DLC}" srcFile="${openedge}/_sec-authentication-domain.d" table="_sec-authentication-domain">
+	        <DBConnection dbName="sports2000" dbDir="${dbdir}" singleUser="true"/>
+	    </PCTLoadData>
+
+    </target>
+
+    <target name="buildwebapps" depends="buildwar">
+        <echo>building web application zip files</echo>
+
+        <zip destfile="build/webapps/Payments.zip" basedir="src/main/webapps/Payments" />
+        <zip destfile="build/webapps/SSOProd.zip" basedir="src/main/webapps/SSOProd" />
+
+    </target>
+
+    <target name="buildwar">
+        <echo>building nginx war</echo>
+
+        <unzip src="${env.DLC}/servers/pasoe/extras/webui.war" dest="build/nginx/"/>
+
+        <copy todir="build/nginx/">
+            <fileset dir="src/main/webapps/nginx"/>
+        </copy>
+
+        <zip destfile="build/webapps/nginx.war" basedir="build/nginx" />
+    </target>
+
+
+</project>

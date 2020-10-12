@@ -1,0 +1,62 @@
+<project name="PASOE SSO with form-local OpenEdge archive" basedir=".">
+
+  <description>
+  Template build file for ABL application deployment tailoring.
+  Added to instance ablapps appname tlr directory.
+  </description>
+
+  <!-- Set environment variables required for the ANT script -->  
+  <property environment="env" />
+  <fail unless="env.DLC" message="You should install OpenEdge to run this script"/>
+  <property name="openedge" value="../openedge" />
+  <property name="dbdir" value="${catalina.base}/work" />
+  <property name="rcode" value="../openedge" />
+  <property name="ablappconf" value="${catalina.base}/ablapps/${ablapp.name}/conf" />
+
+  <condition property="isWindows">
+    <os family="windows" />
+  </condition>
+
+  <condition property="isUnix">
+    <os family="unix" />
+  </condition>
+
+  <!-- Called when a deployment artifact is created -->
+  <target name="ablapp_deploy">
+	  <echo>creating database copy of sports2000</echo>
+	 
+	  <mkdir dir="${dbdir}"/>
+    <exec executable="${env.DLC}/bin/prodb">
+      <arg value="${dbdir}/sports2000"/>
+      <arg value="sports2000"/>
+    </exec>
+  </target>
+
+  <target name="ablapp_deployed">
+    <!-- Called when a deployment artifact is created -->
+
+    <!-- assume ROOT is not expanded -->
+    <unzip src="${catalina.base}/webapps/ROOT.war" dest="${catalina.base}/webapps/ROOT/"/>
+    
+    <!-- Copy over redirect page to ROOT-->
+    <copy file="errorPage.jsp" todir="${catalina.base}/webapps/ROOT/WEB-INF/jsp/" overwrite="true"/>
+      
+  </target>
+
+  <target name="ablapp_undeploy">
+    <!-- Called when a deployment artifact is removed from its container -->
+  </target>
+
+  <target name="ablapp_undeployed">
+    <!-- Called when a deployment artifact is removed from its container -->
+  </target>
+
+  <target name="ablapp_export">
+    <!-- Called when a deployment artifact is exported from its container -->
+  </target>
+
+  <target name="ablapp_exported">
+    <!-- Called when a deployment artifact is exported from its container -->
+  </target>
+
+</project>

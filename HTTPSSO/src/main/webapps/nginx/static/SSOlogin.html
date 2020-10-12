@@ -1,0 +1,110 @@
+
+
+<html>
+<head>
+<title>Progress Application Server SSO Login</title>
+<link rel="stylesheet" type="text/css" href="/nginx/static/myStyle.css"/>
+<link rel="stylesheet" type="text/css" href="https://secure.progress.com/style/css/pacific-style.css"/>
+<link href='https://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+<link href="https://secure.progress.com/style/css/fonts.css" type="text/css" rel="stylesheet" media="all">
+
+
+<style>
+    
+    .icon { width:20px; height:20px; display:block; float:left; }
+    .error { background:url(../images/icons.png) no-repeat 0 0; }
+    .info { background:url(../images/icons.png) no-repeat -25px 0; }
+    .arrow { background:url(../images/icons.png) no-repeat -50px 0; }
+    .icon { margin-right:0.5em; }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
+
+</script>
+
+<script type="text/javascript">
+
+
+function formAuthentication()
+{
+
+  if ((document.getElementById('username').value == "") || (document.getElementById('password').value == ""))
+       {
+         
+         sweetAlert("Credentails cannot be empty", "Please enter!", "warning"); 
+         return false;
+
+       }
+
+var formData = "j_username=" + document.getElementById('username').value + "&j_password=" + document.getElementById('password').value;
+
+$.ajax({
+         type: "POST",
+         url: "/SSOProd/static/auth/j_spring_security_check",
+          data: formData,
+          beforeSend: function(xhr) {
+                 xhr.setRequestHeader("Accept","application/json");   
+            },
+         success: function (data, status, xhr) {
+                   console.log(JSON.stringify(data));
+                   sessionStorage.setItem("access_token",data.access_token);
+                   sessionStorage.setItem("refresh_token",data.refresh_token);
+                   sessionStorage.setItem("refresh_threshold",10);
+
+                   var expires_in = new Date();
+                   sessionStorage.setItem("expires_in",expires_in.setSeconds(data.expires_in));
+                   window.location.href = "/nginx/static/Employee_SSO.html";
+                },
+
+         error: function (xhr, status) {
+                console.log(xhr.status);
+
+               if (xhr.status == "401")
+                  {
+                    sweetAlert("401: UnAuthorized User!", "Please contact your Administrator", "error")
+                  }
+
+               if (xhr.status == "403")
+                  {
+                    sweetAlert("403: Forbidden User!", "Please contact your Administrator", "error")
+                  }
+
+               if (xhr.status == "500")
+                  {
+                    sweetAlert("500: Something wrong with the server!", "Please try again", "error")
+                  } 
+
+             return false;
+         }
+});
+
+}
+</script>
+
+</head>
+<body>
+
+<div class="wrap">    
+<form onSubmit="return formAuthentication()">
+        <h1> Login to Progress Application with form-local</h1> 
+       <label>
+         Username:
+         </label>
+        <input type='text' id="username" name="j_username" />
+
+        <label>
+         Password:
+         </label>
+        <input type='password' id="password" name="j_password"/>
+         <input type="button" class="btn-login" value="LOG IN" onclick="formAuthentication()"/>
+    </form>
+</div>
+
+
+</body>
+</html>
+

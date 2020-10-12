@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>
+    <title></title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.2.621/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.2.621/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.2.621/styles/kendo.material.mobile.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert-dev.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
+
+    <script src="https://kendo.cdn.telerik.com/2017.2.621/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2017.2.621/js/kendo.all.min.js"></script>
+
+
+
+<style type="text/css">
+.topcorner{
+   position:absolute;
+   border: none;
+   top:5;
+   right:0;
+   padding: 5px 30px;
+   font-size: 18px;
+   color: red;
+   background-color: white;
+   font-family: "Times New Roman", Georgia, Serif;
+  }
+
+
+.ping {
+	background-color: white;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	border-radius:28px;
+	border:1px solid #18ab29;
+	cursor:pointer;
+	color: lightslategrey;
+	font-family:Arial;
+	font-size: 18px;
+	padding:16px 31px;
+	text-decoration:none;
+}
+
+</style>
+
+<script>
+
+function logout() 
+{
+
+swal({
+  title: "Are you sure you want to logout?",
+  text: "",
+  type: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#DD6B55",
+  confirmButtonText: "Yes, logout!",
+  cancelButtonText: "No, cacel logout !",
+  closeOnConfirm: false,
+  closeOnCancel: false
+},
+function(isConfirm){
+  if (isConfirm) {
+    $.ajax({
+         type: "POST",
+         url: "/SSOProd/static/auth/j_spring_security_logout",
+          beforeSend: function(xhr) {
+                 xhr.setRequestHeader("Accept","application/json");
+            },
+         success: function (data, status, xhr) {
+                   console.log(JSON.stringify(data));
+                   window.location.href = "/nginx/static/SSOlogin.html";
+                },
+
+         error: function (xhr, status) {
+                console.log(xhr.status);
+
+               if (xhr.status == "401")
+                  {
+                    sweetAlert("401: UnAuthorized User!", "Please contact your Administrator", "error")
+                  }
+
+               if (xhr.status == "403")
+                  {
+                    sweetAlert("403: Forbidden User!", "Please contact your Administrator", "error")
+                  }
+
+               if (xhr.status == "500")
+                  {
+                    sweetAlert("500: Something wrong with the server!", "Please try again", "error")
+                  }
+
+             return false;
+         }
+}); 
+   // swal("Success!", "You have logged out successfully.", "success");
+  } else {
+    swal("Logout Cancel", "Using the session for further requests!", "info");
+    return false;
+  }
+});
+
+}
+
+
+function Payments() {
+
+ $.ajax({
+         type: "GET",
+         url: "/Payments/web/pdo/Payments/userInfo",
+          beforeSend: function(xhr) {
+                 xhr.setRequestHeader("Accept","application/json");
+                 xhr.setRequestHeader("Authorization","OECP " + sessionStorage.access_token);
+            },
+         success: function (data, status, xhr) {
+                  swal("Success!", xhr.responseText, "success")
+                   
+                   
+                },
+
+         error: function (xhr, status) {
+                console.log(xhr.status);
+               if (xhr.status == "401")
+                  {
+                    sweetAlert("401: UnAuthorized User!", xhr.responseText, "error")
+                  }
+
+               if (xhr.status == "403")
+                  {
+                    sweetAlert("403: Forbidden User!", xhr.responseText, "error")
+                  }
+
+               if (xhr.status == "500")
+                  {
+                    sweetAlert("500: Something wrong with the server!", xhr.responseText, "error")
+                  }
+
+             return false;
+         }
+}); 
+
+
+
+
+}
+
+</script>
+
+</head>
+<body>
+
+<div class="logout">
+    <button class="topcorner" onclick="logout()">Logout</button>
+</div>
+
+
+<div>
+    <button class="ping" onclick="Payments()">Ping Payments</button>
+</div>
+
+
+<br>
+<br>
+<h1> Employee List </h1>
+<div>
+</div>
+
+
+
+<div id="example">
+            <div id="grid"></div>
+
+            <script>
+                $(document).ready(function () {
+                    $("#grid").kendoGrid({
+                        dataSource: {
+                            type: "json",
+                            transport: {
+                                read: {
+                                   url: "/Payments/web/pdo/DOHService/SportsCE",
+                                   headers: {'Authorization': 'OECP ' + sessionStorage.access_token} 
+                                     }
+                            },
+                            error: function(e) {
+     				   //TODO: handle the errors
+        				alert("error");
+    				},
+                            schema: {
+         		        data: "dsEmployee.ttEmployee"
+            			 }
+       			    },
+                        pageSize: 10,
+                        height: 900,
+                        groupable: true,
+                        toolbar: [{text: "Refresh", className: "btn-refresh"}],
+                        sortable: true,
+                        pageable: {
+                            pageSizes: true,
+                            buttonCount: 5
+                        },
+                        columns: [{
+                            field: "EmpNum",
+                            title: "EmpNum",
+                            width: 200
+                        }, {
+                            field: "LastName",
+                            title: "LastName"
+                        }, {
+                            field: "FirstName",
+                            title: "FirstName"
+                        }, {
+                            field: "City",
+                            width: 150
+                        }]
+                    }).on("click", ".btn-refresh", function(e) {
+                       RefreshSSO();
+                       $("#grid").data("kendoGrid").dataSource.read();
+                 });
+                });
+
+
+function RefreshSSO() 
+{
+
+var Refreshtoken = {"token_type" : "oecp", "refresh_token" : sessionStorage.refresh_token}; 
+
+//console.log(sessionStorage.refresh_threshold);
+//console.log(sessionStorage.expires_in);
+
+var dtime = (sessionStorage.expires_in - new Date().getTime()) / 1000;
+
+//console.log("dtime value is  " + dtime);
+$.ajax({
+         type: "POST",
+         data: JSON.stringify(Refreshtoken),	
+         dataType: 'json', 
+         url: "/SSOProd/static/auth/token?op=refresh",
+          beforeSend: function(xhr) {
+                 xhr.setRequestHeader("Accept","application/json");
+                 xhr.setRequestHeader("Content-type","application/json");
+            },
+         success: function (data, status, xhr) {
+                   console.log(JSON.stringify(data));
+                   delete sessionStorage.access_token;
+                   sessionStorage.setItem("access_token",data.access_token);
+                },
+
+         error: function (xhr, status) {
+                console.log(xhr.status);
+
+               if (xhr.status == "401")
+                  {
+                    sweetAlert("401: UnAuthorized User!", "Cannot refresh the token", "error")
+                  }
+
+               if (xhr.status == "403")
+                  {
+                    sweetAlert("403: Forbidden User!", "User not allowed to refresh the token", "error")
+                  }
+
+               if (xhr.status == "500")
+                  {
+                    sweetAlert("500: Something wrong while refreshing the token!", "Please try again", "error")
+                  }
+
+             return false;
+         }
+});
+
+
+
+
+}
+
+
+            </script>
+</div>
+
+
+</body>
+</html>
+
