@@ -1,0 +1,8 @@
+            - name: Rustlings Progress
+  # You may pin to the exact commit or the version.
+  # uses: dogoo-me/rustlings-progress@6f993ad35a15c8689de871e4338c70836f6b0586
+  uses: dogoo-me/rustlings-progress@v1
+  with:
+    # github token for octokit
+    github_token: 
+          
