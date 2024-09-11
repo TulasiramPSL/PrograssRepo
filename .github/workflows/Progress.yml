@@ -1,0 +1,52 @@
+name: Progress OpenEdge CI/CD
+ 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+ 
+    - name: Set up Progress OpenEdge environment
+      run: |
+        # Example: Install necessary dependencies and set up Progress OpenEdge environment
+        sudo apt-get update
+        sudo apt-get install -y wget
+        wget -qO- http://example.com/progress-opensource.tar.gz | tar xz -C /opt
+        export PATH=/opt/progress/bin:$PATH
+ 
+    - name: Build the application
+      run: |
+        # Example: Compile or build your Progress OpenEdge application
+        # Replace with the actual build commands for your application
+        echo "Building Progress OpenEdge application..."
+        # ./build-command
+ 
+    - name: Run tests
+      run: |
+        # Example: Run tests on your Progress OpenEdge application
+        # Replace with the actual test commands for your application
+        echo "Running tests..."
+        # ./test-command
+ 
+    - name: Deploy the application
+      run: |
+        # Example: Deploy your application to the target environment
+        # Replace with the actual deployment commands for your application
+        echo "Deploying application..."
+        # ./deploy-command
+ 
+    - name: Clean up
+      run: |
+        # Example: Clean up temporary files and directories
+        echo "Cleaning up..."
+        # rm -rf /opt/progress
